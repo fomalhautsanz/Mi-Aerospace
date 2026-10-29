@@ -1,0 +1,10 @@
+{
+  "description": "Explore an information security student’s portfolio of projects, experience, skills, achievements, and events in a playful, responsive interface for recruiters and collaborators.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
