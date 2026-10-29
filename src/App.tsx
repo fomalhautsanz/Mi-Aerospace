@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import wasabi from "@/assets/wasabi.png"
 import {
   ArrowUp,
   Award,
@@ -357,7 +358,7 @@ export default function App() {
             <div className="mascot-frame">
               <div className="frame-gloss" />
               <img
-                src="/assets/wasabi-avatar.png"
+                src={wasabi}
                 alt="Pixel art portrait wearing a friendly wasabi mascot hat"
               />
             </div>
@@ -398,8 +399,8 @@ export default function App() {
               <div className="profile-content">
                 <div className="profile-avatar">
                   <img
-                    src="/assets/wasabi-avatar.png"
-                    alt="Fomalhaut's wasabi pixel avatar"
+                    src={wasabi}
+                    alt="Pixel art portrait wearing a friendly wasabi mascot hat"
                   />
                 </div>
                 <div>
