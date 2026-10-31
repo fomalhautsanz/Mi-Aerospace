@@ -14,6 +14,15 @@ import promptCertificate from "@/assets/certificates/prompt1.png"
 import promptCourseCertificate from "@/assets/certificates/prompt2.png"
 import svfoCertificate from "@/assets/certificates/svfo.png"
 import tlnCertificate from "@/assets/certificates/tln.png"
+import busProjectImage from "@/assets/projects/bus.png"
+import cuartaProjectImage from "@/assets/projects/cuarta.png"
+import edelweissProjectImage from "@/assets/projects/edelweiss.png"
+import geopulseProjectImage from "@/assets/projects/geopulse.png"
+import mabiniProjectImage from "@/assets/projects/mabini.png"
+import parkingProjectImage from "@/assets/projects/parking.png"
+import rentabikeProjectImage from "@/assets/projects/rentabike.png"
+import sportsProjectImage from "@/assets/projects/sports.png"
+
 import {
   ArrowUp,
   Award,
@@ -43,6 +52,12 @@ import {
   Wrench,
 } from "lucide-react"
 
+type ProjectDetails = {
+  problem: string
+  solution: string
+  features: string[]
+}
+
 type ModalItem = {
   type: "event" | "project" | "certificate"
   title: string
@@ -50,6 +65,22 @@ type ModalItem = {
   meta?: string
   tags?: string[]
   image?: string
+  fit?: "cover" | "contain"
+  details?: ProjectDetails
+  link?: string
+}
+
+type ProjectItem = {
+  title: string
+  year: string
+  category: string
+  description: string
+  tags: string[]
+  image: string
+  featured?: boolean
+  fit?: "cover" | "contain"
+  details: ProjectDetails
+  link?: string
 }
 
 type EventItem = {
@@ -127,31 +158,50 @@ const events: EventItem[] = [
   },
 ]
 
-const projects = [
+const projects: ProjectItem[] = [
   {
-    title: "Cuarta",
-    year: "2026–2027",
-    category: "Featured · FinTech",
+    title: "RentaBike",
+    year: "2026",
+    category: "Featured · Information and Management System",
     description:
-      "Django-based personal finance project focused on budgeting, expense tracking, savings goals, and financial analytics using the 50/30/20 budgeting approach.",
-    tags: ["Django", "Data", "Finance"],
+      "QR-based bicycle rental and inventory management system for borrowing, fees, overtime, and rental status.",
+    tags: ["Laravel", "PHP", "MySQL"],
+    image: rentabikeProjectImage,
     featured: true,
+    details: {
+      problem:
+        "Bike borrowing and returns were tracked manually, making it hard to know which bikes were out, compute fees and overtime, and monitor inventory.",
+      solution:
+        "A Laravel web system with QR-based check-out and check-in, automatic fee and overtime computation, and separate admin and staff portals.",
+      features: [
+        "QR-based rental and return",
+        "Automatic fees and overtime",
+        "Live bike status (available, rented, maintenance)",
+        "Dashboard with weekly rentals and bike type charts",
+        "Admin and staff portals",
+      ],
+    },
   },
   {
     title: "USeP ePark",
     year: "2026",
-    category: "Information System",
+    category: "Information and Management System",
     description:
       "QR-based parking management system featuring reservations, real-time occupancy tracking, and role-based access.",
-    tags: ["QR", "Access control"],
-  },
-  {
-    title: "RentaBike",
-    year: "2026",
-    category: "Management System",
-    description:
-      "QR-based bicycle rental and inventory management system for borrowing, fees, overtime, and rental status.",
-    tags: ["QR", "Inventory"],
+    tags: ["PHP", "QR", "MySQL"],
+    image: parkingProjectImage,
+    details: {
+      problem:
+        "Parking slots were hard to monitor, with no clear view of what was occupied or reserved.",
+      solution:
+        "A PHP/MySQL system where guards scan QR codes and users reserve slots, with a live slot map for each parking area.",
+      features: [
+        "Slot reservations",
+        "Real-time occupancy status",
+        "QR scanning for guards",
+        "Role-based dashboards",
+      ],
+    },
   },
   {
     title: "GeoPulse",
@@ -159,7 +209,64 @@ const projects = [
     category: "IoT",
     description:
       "Landslide and Earthquake Risk Disaster Alert System Using Arduino-Based IoT.",
-    tags: ["Arduino", "IoT"],
+    tags: ["Arduino", "C++", "React", "IoT"],
+    image: geopulseProjectImage,
+    fit: "contain",
+    details: {
+      problem:
+        "Communities in landslide- and earthquake-prone areas often get little early warning, and internet access in mountainous areas can be weak.",
+      solution:
+        "Sensors monitor soil moisture and ground movement, trigger local alerts, and send SMS notifications to residents, with a React dashboard for monitoring.",
+      features: [
+        "Soil moisture and ground movement monitoring",
+        "Earthquake vibration detection",
+        "On-site buzzer and LED alerts",
+        "SMS alerts for low-connectivity areas",
+        "React monitoring dashboard",
+      ],
+    },
+  },
+  {
+    title: "Cuarta",
+    year: "2026",
+    category: "FinTech",
+    description:
+      "Django-based personal finance project focused on budgeting, expense tracking, savings goals, and financial analytics using the 50/30/20 budgeting approach.",
+    tags: ["Django", "Python", "Pandas", "MySQL"],
+    image: cuartaProjectImage,
+    details: {
+      problem:
+        "Many students and young earners don't know where their money goes each month or how much they can safely spend.",
+      solution:
+        "A Django app that applies the 50/30/20 rule to income, tracks spending, and shows how much is still available each day.",
+      features: [
+        "50/30/20 budget allocation",
+        "Income and expense tracking",
+        "Savings goals",
+        "Analytics and charts with Pandas",
+      ],
+    },
+  },
+  {
+    title: "Edelweiss Crimes",
+    year: "2026",
+    category: "Text-Based Game",
+    description:
+      "Text-based crime investigation game built with C#, featuring interactive storytelling, decision-making, and branching narratives.",
+    tags: [".NET", "C#", "Text-Based Game"],
+    image: edelweissProjectImage,
+    details: {
+      problem:
+        "I wanted to explore how story, player choices, and game logic can come together in a simple, playable investigation experience.",
+      solution:
+        "A C# game running in the browser through Blazor WebAssembly, structured as an anthology where each chapter is a new, separate crime.",
+      features: [
+        "Branching narrative and choices",
+        "Investigation actions (examine, search, question)",
+        "Anthology-style chapters",
+        "Playable in the browser",
+      ],
+    },
   },
   {
     title: "Bus Route Monitoring System",
@@ -167,7 +274,41 @@ const projects = [
     category: "Java Simulation",
     description:
       "Java simulation using linked-list data structures and GUI visualization for bus movement and route traversal.",
-    tags: ["Java", "GUI"],
+    tags: ["Linked List", "Java", "JavaFX", "GUI"],
+    image: busProjectImage,
+    details: {
+      problem:
+        "Route traversal is hard to understand from code alone, and bus movement along a route needs to be visualized.",
+      solution:
+        "A JavaFX simulation that models routes as linked lists and animates buses moving stop by stop on a map.",
+      features: [
+        "Linked-list route modeling",
+        "Animated bus movement on a map",
+        "Playback controls",
+        "GUI visualization",
+      ],
+    },
+  },
+  {
+    title: "Sports Equipment Rental System",
+    year: "2025",
+    category: "Java Information System",
+    description:
+      "Java-based sports equipment rental system with inventory management, rental tracking, and user interface for borrowing and returning items.",
+    tags: ["Java", "OOP", "GUI", "MySQL"],
+    image: sportsProjectImage,
+    details: {
+      problem:
+        "Borrowing and returning sports equipment was tracked by hand, which made inventory and rental status hard to follow.",
+      solution:
+        "A Java GUI application backed by MySQL that stores equipment records and tracks who borrowed what.",
+      features: [
+        "Equipment inventory management",
+        "Rental and return tracking",
+        "Object-oriented design",
+        "MySQL database storage",
+      ],
+    },
   },
   {
     title: "Move Mabini Information System",
@@ -176,6 +317,19 @@ const projects = [
     description:
       "Municipality information website concept organizing public information and services.",
     tags: ["HTML", "CSS", "JavaScript"],
+    image: mabiniProjectImage,
+    details: {
+      problem:
+        "Public information and services of the municipality were scattered and hard for residents to find.",
+      solution:
+        "A website concept that organizes government, transparency, services, and tourism information in one place.",
+      features: [
+        "Sectioned services pages",
+        "Announcements and news",
+        "Responsive layout",
+        "Clear navigation",
+      ],
+    },
   },
 ]
 
@@ -314,6 +468,19 @@ export default function App() {
   const [filter, setFilter] = useState("All")
   const [modal, setModal] = useState<ModalItem | null>(null)
   const [query, setQuery] = useState("")
+  const openProject = (p: ProjectItem) => {
+    setModal({
+      type: "project",
+      title: p.title,
+      description: p.description,
+      meta: `${p.category} · ${p.year}`,
+      tags: p.tags,
+      image: p.image,
+      fit: p.fit,
+      details: p.details,
+      link: p.link,
+    })
+  }
   useEffect(() => {
     const close = (e: KeyboardEvent) => e.key === "Escape" && setModal(null)
     window.addEventListener("keydown", close)
@@ -665,7 +832,7 @@ export default function App() {
                 </b>
                 <div className="shine" />
               </button>
-              <button
+                          <button
                 className="babaylan"
                 onClick={() =>
                   setModal({
@@ -681,10 +848,10 @@ export default function App() {
                   <small>Inclusive leadership</small>
                   <h3>Babaylan</h3>
                   <p>USeP Outstanding Women Nominee</p>
+                  <b className="award-certificate-link">
+                    View certificate <ExternalLink />
+                  </b>
                 </div>
-                <b className="award-certificate-link">
-                  View certificate <ExternalLink />
-                </b>
               </button>
             </div>
           </div>
@@ -697,26 +864,22 @@ export default function App() {
             text="Systems shaped by real needs, thoughtful structure, and a drive to keep improving."
           />
           <div className="project-grid">
-            {projects.map((p, i) => (
+            {projects.map((p) => (
               <article
                 className={`project-card ${p.featured ? "featured" : ""}`}
                 key={p.title}
               >
                 <button
-                  className={`project-visual pv${i}`}
-                  onClick={() =>
-                    setModal({
-                      type: "project",
-                      title: p.title,
-                      description: p.description,
-                      meta: `${p.category} · ${p.year}`,
-                      tags: p.tags,
-                    })
-                  }
+                  className="project-visual"
+                  onClick={() => openProject(p)}
+                  aria-label={`View ${p.title} project details`}
                 >
-                  <span className="screen-lines" />
-                  <FolderOpen />
-                  <small>Project preview</small>
+                  <img
+                    className="project-image"
+                    src={p.image}
+                    alt={`${p.title} preview`}
+                    style={{ objectFit: p.fit ?? "contain" }}
+                  />
                   {p.featured && <b>Featured</b>}
                 </button>
                 <div>
@@ -731,15 +894,7 @@ export default function App() {
                     ))}
                   </div>
                   <Button
-                    onClick={() =>
-                      setModal({
-                        type: "project",
-                        title: p.title,
-                        description: p.description,
-                        meta: `${p.category} · ${p.year}`,
-                        tags: p.tags,
-                      })
-                    }
+                    onClick={() => openProject(p)}
                   >
                     View details <ChevronRight />
                   </Button>
@@ -804,16 +959,30 @@ export default function App() {
               <p>
                 Contact details and social links are ready for your information.
               </p>
-              {[
-                "Email address — placeholder",
-                "GitHub profile — placeholder",
-                "LinkedIn profile — placeholder",
-              ].map((x) => (
-                <div className="contact-link" key={x}>
-                  <span>{x}</span>
-                  <ExternalLink />
-                </div>
-              ))}
+              <a className="contact-link" href="mailto:saladatrixy@gmail.com">
+              <span>Email — saladatrixy@gmail.com</span>
+              <ExternalLink />
+            </a>
+
+            <a
+              className="contact-link"
+              href="https://github.com/fomalhautsanz"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <span>GitHub — github.com/fomalhautsanz</span>
+              <ExternalLink />
+            </a>
+
+            <a
+              className="contact-link"
+              href="https://www.linkedin.com/in/trixy-salada-0623203a6/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <span>LinkedIn — Trixy Salada</span>
+              <ExternalLink />
+            </a>
             </div>
             <Window title="new_message.mail" icon={<Mail />}>
               <form onSubmit={(e) => e.preventDefault()}>
@@ -844,7 +1013,7 @@ export default function App() {
 
       <footer>
         <span>
-          <Leaf /> © 2026 Fomalhaut Sanz
+          <Leaf /> © 2026 Trixy Salada
         </span>
         <p>Built with curiosity, code, and a little wasabi.</p>
       </footer>
@@ -885,7 +1054,14 @@ export default function App() {
                 {modal.image ? (
                   <img
                     src={modal.image}
-                    alt={`${modal.title} ${modal.type === "certificate" ? "certificate" : "event"}`}
+                    alt={`${modal.title} ${
+                      modal.type === "certificate"
+                        ? "certificate"
+                        : modal.type === "project"
+                          ? "project preview"
+                          : "event"
+                    }`}
+                    style={{ objectFit: modal.fit ?? "contain" }}
                   />
                 ) : (
                   <div>
@@ -899,13 +1075,6 @@ export default function App() {
                   </div>
                 )}
               </div>
-              {modal.type === "project" && (
-                <div className="thumbs">
-                  <button className="selected" />
-                  <button />
-                  <button />
-                </div>
-              )}
               <small className="modal-meta">
                 {modal.meta || "Details coming soon"}
               </small>
@@ -918,18 +1087,24 @@ export default function App() {
                   ))}
                 </div>
               )}
-              {modal.type === "project" && (
+              {modal.type === "project" && modal.details && (
                 <div className="detail-grid">
-                  {[
-                    "Problem — placeholder",
-                    "Solution — placeholder",
-                    "Key features — placeholder",
-                  ].map((x) => (
-                    <div key={x}>
-                      <b>{x.split(" — ")[0]}</b>
-                      <span>{x.split(" — ")[1]}</span>
-                    </div>
-                  ))}
+                  <div>
+                    <b>Problem</b>
+                    <p>{modal.details.problem}</p>
+                  </div>
+                  <div>
+                    <b>Solution</b>
+                    <p>{modal.details.solution}</p>
+                  </div>
+                  <div className="feature-details">
+                    <b>Key features</b>
+                    <ul>
+                      {modal.details.features.map((feature) => (
+                        <li key={feature}>{feature}</li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               )}
               <div className="modal-actions">
@@ -943,14 +1118,20 @@ export default function App() {
                   >
                     <ExternalLink /> Open certificate
                   </a>
-                ) : (
+                ) : modal.type === "project" && modal.link ? (
+                  <a
+                    className="aero-button primary"
+                    href={modal.link}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <ExternalLink /> View on GitHub
+                  </a>
+                ) : modal.type !== "project" ? (
                   <Button className="primary">
-                    <ExternalLink />{" "}
-                    {modal.type === "project"
-                      ? "GitHub placeholder"
-                      : "Open placeholder"}
+                    <ExternalLink /> Open placeholder
                   </Button>
-                )}
+                ) : null}
               </div>
             </div>
           </div>
