@@ -1,12 +1,25 @@
 import { useEffect, useState } from "react"
 import wasabi from "@/assets/wasabi.png"
+import bananaImage from "@/assets/events/banana.png"
+import kickstartImage from "@/assets/events/kickstart.jpg"
+import lexImage from "@/assets/events/lex.png"
+import mcitsImage from "@/assets/events/mcits.jpg"
+import olympiadImage from "@/assets/events/olympiad.jpg"
+import stemazingImage from "@/assets/events/stemazing.jpg"
+import tlnImage from "@/assets/events/tln.png"
+import babaylanCertificate from "@/assets/certificates/babaylan.png"
+import dictCertificate from "@/assets/certificates/dict.png"
+import olympiadCertificate from "@/assets/certificates/olympiad.png"
+import promptCertificate from "@/assets/certificates/prompt1.png"
+import promptCourseCertificate from "@/assets/certificates/prompt2.png"
+import svfoCertificate from "@/assets/certificates/svfo.png"
+import tlnCertificate from "@/assets/certificates/tln.png"
 import {
   ArrowUp,
   Award,
   BookOpen,
   Briefcase,
   Camera,
-  ChevronLeft,
   ChevronRight,
   Code2,
   Database,
@@ -36,6 +49,16 @@ type ModalItem = {
   description: string
   meta?: string
   tags?: string[]
+  image?: string
+}
+
+type EventItem = {
+  title: string
+  meta: string
+  description: string
+  accent: string
+  badge?: string
+  image: string
 }
 
 const nav = [
@@ -50,50 +73,57 @@ const nav = [
   ["Contact", "contact"],
 ]
 
-const events = [
-  {
-    title: "STEMazing 2024",
-    meta: "Competition / Research · Davao de Oro Festival of Talents",
-    description:
-      "Applied research, data interpretation, critical thinking, and innovative problem-solving to develop and present a solution to a real-world problem.",
-    accent: "research",
-  },
-  {
-    title: "TLN Cybersecurity Challenge",
-    meta: "Hackathon · 2026",
-    description: "DevPost Hackathon.",
-    accent: "cyber",
-  },
-  {
-    title: "LexHack 2026",
-    meta: "Hackathon · 2026",
-    description: "DevPost Hackathon.",
-    accent: "hack",
-  },
-  {
-    title: "Banana Hacks",
-    meta: "Hackathon · 2026",
-    description: "DevPost Hackathon.",
-    accent: "banana",
-  },
-  {
-    title: "KickSTART Mindanao",
-    meta: "Innovation / Startup · 2026",
-    description: "Team1 Avalanche Conect @ START-DOST.",
-    accent: "startup",
-  },
-  {
-    title: "Mindanao Conference for IT Students",
-    meta: "Conference · 2026",
-    description: "Mindanao Conference for Information Technology Students.",
-    accent: "conference",
-  },
+const events: EventItem[] = [
   {
     title: "IT Olympiad 2026",
     meta: "Competition · Data Mining",
     description: "2nd Place",
     accent: "award",
     badge: "2nd Place",
+    image: olympiadImage,
+  },
+  {
+    title: "Mindanao Conference for IT Students",
+    meta: "Conference · 2026",
+    description: "Mindanao Conference for Information Technology Students.",
+    accent: "conference",
+    image: mcitsImage,
+  },
+  {
+    title: "KickSTART Mindanao",
+    meta: "Innovation / Startup · 2026",
+    description: "Team1 Avalanche Conect @ START-DOST.",
+    accent: "startup",
+    image: kickstartImage,
+  },
+  {
+    title: "TLN Cybersecurity Challenge",
+    meta: "Hackathon · 2026",
+    description: "DevPost Hackathon.",
+    accent: "cyber",
+    image: tlnImage,
+  },
+  {
+    title: "LexHack 2026",
+    meta: "Hackathon · 2026",
+    description: "DevPost Hackathon.",
+    accent: "hack",
+    image: lexImage,
+  },
+  {
+    title: "Banana Hacks",
+    meta: "Hackathon · 2026",
+    description: "DevPost Hackathon.",
+    accent: "banana",
+    image: bananaImage,
+  },
+  {
+    title: "STEMazing 2024",
+    meta: "Competition / Research · Davao de Oro Festival of Talents",
+    description:
+      "Applied research, data interpretation, critical thinking, and innovative problem-solving to develop and present a solution to a real-world problem.",
+    accent: "research",
+    image: stemazingImage,
   },
 ]
 
@@ -182,12 +212,32 @@ const skillGroups: Record<string, string[]> = {
 }
 
 const certificates = [
-  [
-    "DICT XI",
-    "20-hour Building Permit and Certificate of Occupancy Users Training",
-  ],
-  ["DOST-SEI", "Values Formation Orientation Webinar 2026"],
-  ["Prompt Like an Engineer", "DICT-ITU DTC through Cisco Networking Academy"],
+  {
+    title: "DICT XI",
+    description:
+      "20-hour Building Permit and Certificate of Occupancy Users Training",
+    image: dictCertificate,
+  },
+  {
+    title: "DOST-SEI",
+    description: "Values Formation Orientation Webinar 2026",
+    image: svfoCertificate,
+  },
+  {
+    title: "Prompt Like an Engineer",
+    description: "DICT-ITU DTC through Cisco Networking Academy",
+    image: promptCertificate,
+  },
+  {
+    title: "Prompt Like an Engineer — Course Completion",
+    description: "Cisco Networking Academy",
+    image: promptCourseCertificate,
+  },
+  {
+    title: "TLN Cybersecurity Challenge 2026",
+    description: "DevPost Hackathon by Tech Literacy Network",
+    image: tlnCertificate,
+  },
 ]
 
 function Window({
@@ -370,7 +420,7 @@ export default function App() {
 
         <div className="quick-grid">
           {[
-            [GraduationCap, "Education", "BS Information Security"],
+            [GraduationCap, "Education", "BS Information Technology"],
             [ShieldCheck, "Focus", "Security · Development · Data"],
             [Trophy, "Achievement", "IT Olympiad — 2nd Place"],
             [Code2, "Projects", "6 selected systems"],
@@ -542,11 +592,7 @@ export default function App() {
                   onClick={() => setModal({ type: "event", ...event })}
                   aria-label={`View ${event.title} photos`}
                 >
-                  <div className="photo-placeholder">
-                    <Camera />
-                    <span>Event photo</span>
-                    <small>Replace with your image</small>
-                  </div>
+                  <img src={event.image} alt={`${event.title} event`} />
                   {event.badge && (
                     <b className="award-badge">
                       <Trophy /> {event.badge}
@@ -573,12 +619,12 @@ export default function App() {
           />
           <div className="achievement-layout">
             <div className="cert-list">
-              {certificates.map(([title, description]) => (
+              {certificates.map(({ title, description, image }) => (
                 <button
                   key={title}
                   className="certificate"
                   onClick={() =>
-                    setModal({ type: "certificate", title, description })
+                    setModal({ type: "certificate", title, description, image })
                   }
                 >
                   <span>
@@ -596,7 +642,17 @@ export default function App() {
               ))}
             </div>
             <div className="award-stack">
-              <article className="featured-award">
+              <button
+                className="featured-award"
+                onClick={() =>
+                  setModal({
+                    type: "certificate",
+                    title: "IT Olympiad 2026",
+                    description: "Data Mining Competition · 2nd Place",
+                    image: olympiadCertificate,
+                  })
+                }
+              >
                 <div className="trophy-orb">
                   <Trophy />
                 </div>
@@ -604,16 +660,32 @@ export default function App() {
                 <h3>IT Olympiad</h3>
                 <p>Data Mining Competition</p>
                 <strong>2nd Place</strong>
+                <b className="award-certificate-link">
+                  View award certificate <ExternalLink />
+                </b>
                 <div className="shine" />
-              </article>
-              <article className="babaylan">
+              </button>
+              <button
+                className="babaylan"
+                onClick={() =>
+                  setModal({
+                    type: "certificate",
+                    title: "Babaylan",
+                    description: "USeP Outstanding Women Nominee",
+                    image: babaylanCertificate,
+                  })
+                }
+              >
                 <Star />
                 <div>
                   <small>Inclusive leadership</small>
                   <h3>Babaylan</h3>
                   <p>USeP Outstanding Women Nominee</p>
                 </div>
-              </article>
+                <b className="award-certificate-link">
+                  View certificate <ExternalLink />
+                </b>
+              </button>
             </div>
           </div>
         </section>
@@ -810,31 +882,30 @@ export default function App() {
             </div>
             <div className="modal-body">
               <div className="modal-image">
-                <div>
-                  <Camera />
-                  <span>
-                    {modal.type === "certificate"
-                      ? "Certificate image"
-                      : "Image placeholder"}
-                  </span>
-                  <small>Add your image here later</small>
-                </div>
-                {modal.type === "event" && (
-                  <>
-                    <button className="previous" aria-label="Previous photo">
-                      <ChevronLeft />
-                    </button>
-                    <button className="next" aria-label="Next photo">
-                      <ChevronRight />
-                    </button>
-                  </>
+                {modal.image ? (
+                  <img
+                    src={modal.image}
+                    alt={`${modal.title} ${modal.type === "certificate" ? "certificate" : "event"}`}
+                  />
+                ) : (
+                  <div>
+                    <Camera />
+                    <span>
+                      {modal.type === "certificate"
+                        ? "Certificate image"
+                        : "Image placeholder"}
+                    </span>
+                    <small>Add your image here later</small>
+                  </div>
                 )}
               </div>
-              <div className="thumbs">
-                <button className="selected" />
-                <button />
-                <button />
-              </div>
+              {modal.type === "project" && (
+                <div className="thumbs">
+                  <button className="selected" />
+                  <button />
+                  <button />
+                </div>
+              )}
               <small className="modal-meta">
                 {modal.meta || "Details coming soon"}
               </small>
@@ -863,12 +934,23 @@ export default function App() {
               )}
               <div className="modal-actions">
                 <Button onClick={() => setModal(null)}>Close</Button>
-                <Button className="primary">
-                  <ExternalLink />{" "}
-                  {modal.type === "project"
-                    ? "GitHub placeholder"
-                    : "Open placeholder"}
-                </Button>
+                {modal.type === "certificate" && modal.image ? (
+                  <a
+                    className="aero-button primary"
+                    href={modal.image}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <ExternalLink /> Open certificate
+                  </a>
+                ) : (
+                  <Button className="primary">
+                    <ExternalLink />{" "}
+                    {modal.type === "project"
+                      ? "GitHub placeholder"
+                      : "Open placeholder"}
+                  </Button>
+                )}
               </div>
             </div>
           </div>
