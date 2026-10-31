@@ -394,6 +394,35 @@ const certificates = [
   },
 ]
 
+/* Stagger index used by the CSS reveal animation (--i) */
+const idx = (i: number) => ({ "--i": i }) as React.CSSProperties
+
+/* Adds the "in" class to any [data-reveal] element the first time it scrolls into view */
+function useReveal() {
+  useEffect(() => {
+    const els = document.querySelectorAll<HTMLElement>("[data-reveal]")
+
+    if (!("IntersectionObserver" in window)) {
+      els.forEach((el) => el.classList.add("in"))
+      return
+    }
+
+    const io = new IntersectionObserver(
+      (entries) =>
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add("in")
+            io.unobserve(e.target)
+          }
+        }),
+      { threshold: 0.15, rootMargin: "0px 0px -8% 0px" },
+    )
+
+    els.forEach((el) => io.observe(el))
+    return () => io.disconnect()
+  }, [])
+}
+
 function Window({
   title,
   icon,
@@ -406,7 +435,7 @@ function Window({
   className?: string
 }) {
   return (
-    <section className={`window ${className}`}>
+    <section className={`window ${className}`} data-reveal>
       <div className="titlebar">
         <span>
           {icon}
@@ -455,7 +484,7 @@ function SectionHead({
   text?: string
 }) {
   return (
-    <div className="section-head">
+    <div className="section-head" data-reveal>
       <span>{kicker}</span>
       <h2>{title}</h2>
       {text && <p>{text}</p>}
@@ -467,7 +496,11 @@ export default function App() {
   const [menu, setMenu] = useState(false)
   const [filter, setFilter] = useState("All")
   const [modal, setModal] = useState<ModalItem | null>(null)
-  const [query, setQuery] = useState("")
+  const [scrolled, setScrolled] = useState(false)
+  const [showTop, setShowTop] = useState(false)
+
+  useReveal()
+
   const openProject = (p: ProjectItem) => {
     setModal({
       type: "project",
@@ -481,11 +514,37 @@ export default function App() {
       link: p.link,
     })
   }
+
   useEffect(() => {
     const close = (e: KeyboardEvent) => e.key === "Escape" && setModal(null)
     window.addEventListener("keydown", close)
     return () => window.removeEventListener("keydown", close)
   }, [])
+
+  /* Navbar deepens after a little scroll; back-to-top appears after the hero */
+  useEffect(() => {
+    const onScroll = () => {
+      setScrolled(window.scrollY > 20)
+      setShowTop(window.scrollY > 600)
+    }
+    onScroll()
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => window.removeEventListener("scroll", onScroll)
+  }, [])
+
+  /* Soft highlight that follows the cursor across glossy cards */
+  useEffect(() => {
+    const move = (e: PointerEvent) => {
+      const card = (e.target as HTMLElement).closest<HTMLElement>(".glow")
+      if (!card) return
+      const r = card.getBoundingClientRect()
+      card.style.setProperty("--mx", `${e.clientX - r.left}px`)
+      card.style.setProperty("--my", `${e.clientY - r.top}px`)
+    }
+    window.addEventListener("pointermove", move)
+    return () => window.removeEventListener("pointermove", move)
+  }, [])
+
   const skillList =
     filter === "All"
       ? Object.entries(skillGroups).flatMap(([group, items]) =>
@@ -502,7 +561,7 @@ export default function App() {
         <span className="bubble b2" />
         <span className="flare" />
       </div>
-      <header className="topbar">
+      <header className={scrolled ? "topbar scrolled" : "topbar"}>
         <a className="brand" href="#home">
           <span className="brand-orb">
             <Leaf size={17} />
@@ -592,8 +651,13 @@ export default function App() {
             [Trophy, "Achievement", "IT Olympiad — 2nd Place"],
             [Code2, "Projects", "6 selected systems"],
             [Users, "Leadership", "4 student roles"],
-          ].map(([Icon, label, value]: any) => (
-            <div className="quick-card" key={label}>
+          ].map(([Icon, label, value]: any, i) => (
+            <div
+              className="quick-card"
+              key={label}
+              data-reveal
+              style={idx(i)}
+            >
               <span>
                 <Icon />
               </span>
@@ -653,7 +717,10 @@ export default function App() {
                     <b>{x}</b>
                     <i
                       style={
-                        { "--p": `${72 + (i % 3) * 8}%` } as React.CSSProperties
+                        {
+                          "--p": `${72 + (i % 3) * 8}%`,
+                          "--i": i,
+                        } as React.CSSProperties
                       }
                     />
                   </div>
@@ -683,8 +750,8 @@ export default function App() {
                   "Administrative Aide — Information Technology Office",
                   "Administrative and technology-related support.",
                 ],
-              ].map(([year, role, desc]) => (
-                <article key={year}>
+              ].map(([year, role, desc], i) => (
+                <article key={year} data-reveal style={idx(i)}>
                   <div className="time-node">{year}</div>
                   <div>
                     <span>DOLE SPES · Mabini, Davao de Oro</span>
@@ -730,7 +797,12 @@ export default function App() {
                 "2026–2027",
               ],
             ].map(([Icon, role, org, date]: any, i) => (
-              <article className={`lead-card c${i}`} key={role}>
+              <article
+                className={`lead-card glow c${i}`}
+                key={role}
+                data-reveal
+                style={idx(i)}
+              >
                 <span>
                   <Icon />
                 </span>
@@ -751,8 +823,10 @@ export default function App() {
           <div className="event-grid">
             {events.map((event, i) => (
               <article
-                className={`event-card ${i === 0 ? "wide" : ""}`}
+                className={`event-card glow ${i === 0 ? "wide" : ""}`}
                 key={event.title}
+                data-reveal
+                style={idx(i % 3)}
               >
                 <button
                   className={`event-image ${event.accent}`}
@@ -786,10 +860,12 @@ export default function App() {
           />
           <div className="achievement-layout">
             <div className="cert-list">
-              {certificates.map(({ title, description, image }) => (
+              {certificates.map(({ title, description, image }, i) => (
                 <button
                   key={title}
                   className="certificate"
+                  data-reveal
+                  style={idx(i % 3)}
                   onClick={() =>
                     setModal({ type: "certificate", title, description, image })
                   }
@@ -811,6 +887,7 @@ export default function App() {
             <div className="award-stack">
               <button
                 className="featured-award"
+                data-reveal
                 onClick={() =>
                   setModal({
                     type: "certificate",
@@ -832,8 +909,10 @@ export default function App() {
                 </b>
                 <div className="shine" />
               </button>
-                          <button
+              <button
                 className="babaylan"
+                data-reveal
+                style={idx(1)}
                 onClick={() =>
                   setModal({
                     type: "certificate",
@@ -864,10 +943,12 @@ export default function App() {
             text="Systems shaped by real needs, thoughtful structure, and a drive to keep improving."
           />
           <div className="project-grid">
-            {projects.map((p) => (
+            {projects.map((p, i) => (
               <article
-                className={`project-card ${p.featured ? "featured" : ""}`}
+                className={`project-card glow ${p.featured ? "featured" : ""}`}
                 key={p.title}
+                data-reveal
+                style={idx(i % 2)}
               >
                 <button
                   className="project-visual"
@@ -893,9 +974,7 @@ export default function App() {
                       <span key={t}>{t}</span>
                     ))}
                   </div>
-                  <Button
-                    onClick={() => openProject(p)}
-                  >
+                  <Button onClick={() => openProject(p)}>
                     View details <ChevronRight />
                   </Button>
                 </div>
@@ -923,8 +1002,13 @@ export default function App() {
               ))}
             </div>
             <div className="skill-cloud">
-              {skillList.map(({ name, group }) => (
-                <div className="skill-chip" key={name} tabIndex={0}>
+              {skillList.map(({ name, group }, i) => (
+                <div
+                  className="skill-chip glow"
+                  key={`${filter}-${name}`}
+                  tabIndex={0}
+                  style={idx(i)}
+                >
                   <span>
                     {group === "Data" ? (
                       <Database />
@@ -951,7 +1035,7 @@ export default function App() {
             text="Interested in working together, discussing technology, or simply saying hello?"
           />
           <div className="contact-grid">
-            <div className="contact-copy">
+            <div className="contact-copy" data-reveal>
               <div className="mail-orb">
                 <Mail />
               </div>
@@ -960,29 +1044,29 @@ export default function App() {
                 Contact details and social links are ready for your information.
               </p>
               <a className="contact-link" href="mailto:saladatrixy@gmail.com">
-              <span>Email — saladatrixy@gmail.com</span>
-              <ExternalLink />
-            </a>
+                <span>Email — saladatrixy@gmail.com</span>
+                <ExternalLink />
+              </a>
 
-            <a
-              className="contact-link"
-              href="https://github.com/fomalhautsanz"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <span>GitHub — github.com/fomalhautsanz</span>
-              <ExternalLink />
-            </a>
+              <a
+                className="contact-link"
+                href="https://github.com/fomalhautsanz"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <span>GitHub — github.com/fomalhautsanz</span>
+                <ExternalLink />
+              </a>
 
-            <a
-              className="contact-link"
-              href="https://www.linkedin.com/in/trixy-salada-0623203a6/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <span>LinkedIn — Trixy Salada</span>
-              <ExternalLink />
-            </a>
+              <a
+                className="contact-link"
+                href="https://www.linkedin.com/in/trixy-salada-0623203a6/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <span>LinkedIn — Trixy Salada</span>
+                <ExternalLink />
+              </a>
             </div>
             <Window title="new_message.mail" icon={<Mail />}>
               <form onSubmit={(e) => e.preventDefault()}>
@@ -1017,7 +1101,11 @@ export default function App() {
         </span>
         <p>Built with curiosity, code, and a little wasabi.</p>
       </footer>
-      <a className="back-top" href="#home" aria-label="Back to top">
+      <a
+        className={showTop ? "back-top show" : "back-top"}
+        href="#home"
+        aria-label="Back to top"
+      >
         <ArrowUp />
       </a>
 
