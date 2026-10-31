@@ -6,6 +6,12 @@ import path from 'node:path'
 
 import siteConfiguration from './.figma/make/site.json'
 
+const [repositoryOwner, repositoryName] = process.env.GITHUB_REPOSITORY?.split('/') ?? []
+const githubPagesBase = repositoryName
+  ? repositoryName.toLowerCase() === `${repositoryOwner}.github.io`.toLowerCase()
+    ? '/'
+    : `/${repositoryName}/`
+  : '/Mi-Aerospace/'
 
 // Vite config — https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -13,7 +19,7 @@ export default defineConfig(({ mode }) => {
   const emitSourcemaps = mode === 'development'
 
   return {
-    base: process.env.FIGMA_PUBLIC_URL ? `${process.env.FIGMA_PUBLIC_URL}/` : '/Mi-Aerospace/',
+    base: process.env.FIGMA_PUBLIC_URL ? `${process.env.FIGMA_PUBLIC_URL}/` : githubPagesBase,
     build: {
       sourcemap: emitSourcemaps ? 'inline' : false,
       minify: !emitSourcemaps,
